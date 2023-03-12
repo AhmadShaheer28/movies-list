@@ -54,6 +54,8 @@ class DBManager: NSObject {
         } catch let error {
             print("Fav error", error.localizedDescription)
         }
+        
+        delegate.saveContext()
     }
     
     func isFavMovie(movie: Movie) -> Bool {
@@ -63,6 +65,7 @@ class DBManager: NSObject {
         do {
             if let results = try context.fetch(fetchRequest) as? [FavMovies] {
                 if results.count > 0 {
+                    print(results.first?.title ?? "")
                     return true
                 }
             }
@@ -89,6 +92,40 @@ class DBManager: NSObject {
             }
             
             return favMovies
+            
+        } catch let error {
+            print("Fav error", error.localizedDescription)
+        }
+        
+        return []
+    }
+    
+    func addSearchedQuery(searchedQuery: String) {
+        guard let queries = NSEntityDescription.entity(forEntityName: "SearchQuery", in: context) else { return }
+        
+        let query = NSManagedObject(entity: queries, insertInto: context)
+        
+        query.setValue(searchedQuery, forKey: "query")
+        
+        do { try context.save() }
+        catch let error { print("error while saving Data", error.localizedDescription) }
+    }
+    
+    func getAllQueries() -> [String] {
+        var queries = [String]()
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SearchQuery")
+        
+        do {
+            guard let data = try context.fetch(fetchRequest) as? [SearchQuery] else { return [] }
+            
+            for q in data {
+                if let val = q.query {
+                    queries.append(val)
+                }
+            }
+            
+            return queries
             
         } catch let error {
             print("Fav error", error.localizedDescription)

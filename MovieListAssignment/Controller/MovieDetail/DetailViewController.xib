@@ -26,6 +26,7 @@
             <subviews>
                 <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="placeholder" translatesAutoresizingMaskIntoConstraints="NO" id="0l4-fl-qwy">
                     <rect key="frame" x="0.0" y="58.999999999999986" width="393" height="255.66666666666663"/>
+                    <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                 </imageView>
                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="ETw-53-9CW">
                     <rect key="frame" x="10" y="324.66666666666669" width="373" height="301.00000000000006"/>

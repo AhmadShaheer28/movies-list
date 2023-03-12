@@ -8,4 +8,7 @@
         <attribute name="title" optional="YES" attributeType="String"/>
         <attribute name="uid" optional="YES" attributeType="String"/>
     </entity>
+    <entity name="SearchQuery" representedClassName="SearchQuery" syncable="YES" codeGenerationType="class">
+        <attribute name="query" optional="YES" attributeType="String"/>
+    </entity>
 </model>

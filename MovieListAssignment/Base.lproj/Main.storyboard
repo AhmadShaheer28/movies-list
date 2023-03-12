@@ -5,7 +5,6 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
-        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -33,34 +32,43 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="cYX-OD-vgT">
-                                <rect key="frame" x="0.0" y="103" width="393" height="749"/>
-                                <color key="backgroundColor" red="0.9137254901960784" green="0.9137254901960784" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="egl-wi-arL">
-                                    <size key="itemSize" width="128" height="128"/>
-                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
-                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                                </collectionViewFlowLayout>
-                                <cells/>
-                                <connections>
-                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="9Co-vS-ccR"/>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="K2d-uU-B4d"/>
-                                </connections>
-                            </collectionView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="B5A-yL-KyV">
+                                <rect key="frame" x="0.0" y="103" width="393" height="734"/>
+                                <subviews>
+                                    <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="cYX-OD-vgT">
+                                        <rect key="frame" x="0.0" y="0.0" width="393" height="714"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="egl-wi-arL">
+                                            <size key="itemSize" width="128" height="128"/>
+                                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                        </collectionViewFlowLayout>
+                                        <cells/>
+                                        <connections>
+                                            <outlet property="dataSource" destination="BYZ-38-t0r" id="9Co-vS-ccR"/>
+                                            <outlet property="delegate" destination="BYZ-38-t0r" id="K2d-uU-B4d"/>
+                                        </connections>
+                                    </collectionView>
+                                    <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" style="medium" translatesAutoresizingMaskIntoConstraints="NO" id="rjc-99-Md8">
+                                        <rect key="frame" x="0.0" y="714" width="393" height="20"/>
+                                    </activityIndicatorView>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <color key="backgroundColor" white="0.83793048469999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="cYX-OD-vgT" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="X88-0V-b7b"/>
-                            <constraint firstItem="cYX-OD-vgT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="ger-0l-sIP"/>
-                            <constraint firstAttribute="bottom" secondItem="cYX-OD-vgT" secondAttribute="bottom" id="jg7-t8-U2l"/>
-                            <constraint firstItem="cYX-OD-vgT" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="u7Z-NF-wwd"/>
+                            <constraint firstItem="B5A-yL-KyV" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="1d9-s0-eLF"/>
+                            <constraint firstItem="B5A-yL-KyV" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="OTn-2Y-K02"/>
+                            <constraint firstItem="B5A-yL-KyV" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Wlq-Hp-Dwx"/>
+                            <constraint firstAttribute="bottom" secondItem="B5A-yL-KyV" secondAttribute="bottom" constant="15" id="enF-3H-c8p"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="p1O-Th-UxF"/>
                     <connections>
                         <outlet property="collectionView" destination="cYX-OD-vgT" id="Gdh-Pc-dWa"/>
+                        <outlet property="loader" destination="rjc-99-Md8" id="GyN-dz-wyO"/>
                         <segue destination="30n-tP-Os5" kind="show" identifier="SearchVC" id="bmX-KP-skr"/>
                     </connections>
                 </viewController>
@@ -78,7 +86,7 @@
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" contentInsetAdjustmentBehavior="never" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="vMm-1c-y1f">
                                 <rect key="frame" x="0.0" y="170" width="393" height="682"/>
-                                <color key="backgroundColor" red="0.9137254901960784" green="0.9137254901960784" blue="0.9137254901960784" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="hmG-Fp-zi5">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -86,10 +94,6 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells/>
-                                <connections>
-                                    <outlet property="dataSource" destination="BYZ-38-t0r" id="9t2-HR-UE5"/>
-                                    <outlet property="delegate" destination="BYZ-38-t0r" id="ahh-IV-vU6"/>
-                                </connections>
                             </collectionView>
                             <stackView opaque="NO" contentMode="scaleToFill" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="Zuj-cT-9ys">
                                 <rect key="frame" x="8" y="113" width="377" height="47"/>
@@ -124,7 +128,7 @@
                             </label>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="cRB-7c-7fb"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <color key="backgroundColor" white="0.83793048469999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="vMm-1c-y1f" firstAttribute="top" secondItem="Zuj-cT-9ys" secondAttribute="bottom" constant="10" id="4LH-xv-KFD"/>
                             <constraint firstAttribute="trailing" secondItem="vMm-1c-y1f" secondAttribute="trailing" id="Dkn-Je-L1d"/>
@@ -150,8 +154,5 @@
     </scenes>
     <resources>
         <image name="magnifyingglass" catalog="system" width="128" height="117"/>
-        <systemColor name="systemBackgroundColor">
-            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-        </systemColor>
     </resources>
 </document>
