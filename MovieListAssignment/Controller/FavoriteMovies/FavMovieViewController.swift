@@ -17,6 +17,7 @@ class FavMovieViewController: BaseViewController {
     //MARK: - Variables
     
     private var movies = [Movie]()
+    var coordinator: MainCoordinator?
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
@@ -103,8 +104,6 @@ extension FavMovieViewController: UICollectionViewDataSource, UICollectionViewDe
 
 extension FavMovieViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = DetailViewController()
-        vc.movie = movies[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
+        coordinator?.startDetailController(for: movies[indexPath.row])
     }
 }

@@ -21,6 +21,7 @@ class SearchViewController: BaseViewController {
     private var page = 1
     private var searching = true
     private var searchedQueries = [String]()
+    var coordinator: MainCoordinator?
     
     
     //MARK: - Lifecycle
@@ -168,9 +169,7 @@ extension SearchViewController: UICollectionViewDelegate {
         if searching {
             filterMovies()
         } else {
-            let vc = DetailViewController()
-            vc.movie = movies[indexPath.row]
-            self.navigationController?.pushViewController(vc, animated: true)
+            coordinator?.startDetailController(for: movies[indexPath.row])
         }
     }
 }

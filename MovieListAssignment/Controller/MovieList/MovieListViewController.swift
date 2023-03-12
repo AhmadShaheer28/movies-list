@@ -20,11 +20,17 @@ class MovieListViewController: BaseViewController {
     private var movies = [Movie]()
     private var page = 1
     private var totalPages = 0
+    var coordinator: MainCoordinator?
     
     
     //MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let navController = self.navigationController {
+            coordinator = MainCoordinator(navigationController: navController)
+        }
+        
         setupView()
     }
     
@@ -58,8 +64,7 @@ class MovieListViewController: BaseViewController {
     }
     
     @objc func favBtnAction() {
-        let vc = FavMovieViewController()
-        self.navigationController?.pushViewController(vc, animated: true)
+        coordinator?.startFavController()
     }
     
     //MARK: - Methods
@@ -153,8 +158,6 @@ extension MovieListViewController: UICollectionViewDataSource, UICollectionViewD
 
 extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = DetailViewController()
-        vc.movie = movies[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
+        coordinator?.startDetailController(for: movies[indexPath.row])
     }
 }
