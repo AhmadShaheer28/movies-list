@@ -1,22 +1,23 @@
 //
-//  MovieListViewController.swift
+//  SearchViewController.swift
 //  MovieListAssignment
 //
-//  Created by Ahmad Shaheer on 10/03/2023.
+//  Created by Ahmad Shaheer on 11/03/2023.
 //
 
 import UIKit
 
-class MovieListViewController: UIViewController {
-    
+class SearchViewController: UIViewController {
+
     //MARK: - Outlets
     
+    @IBOutlet weak var searchTF: UITextField!
     @IBOutlet weak var collectionView: UICollectionView!
     
     
     //MARK: - Variables
     
-    private var movies = [Movie]()
+    var movies = [Movie]()
     private var page = 1
     
     
@@ -26,53 +27,34 @@ class MovieListViewController: UIViewController {
         setupView()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        collectionView.reloadData()
-    }
-    
     
     //MARK: - View Setup
     func setupView() {
-        title = "Movies"
+        title = "Search"
         let nib = UINib(nibName: "MovieCollectionViewCell", bundle: nil)
         collectionView.register(nib, forCellWithReuseIdentifier: "cell")
         
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .search, target: self, action: #selector(searchBtnAction))
-        
-        getMovies(for: page)
     }
     
     
     //MARK: - Actions
     
-    @objc func searchBtnAction() {
-        self.performSegue(withIdentifier: "SearchVC", sender: nil)
+    @IBAction func searchBtnAction(_ sender: Any) {
+        
     }
+    
     
     //MARK: - Methods
     
     func getMovies(for page: Int) {
-        NetworkRequest.shared.post(with: Endpoint.movieList, page: page) { (results: MainApi<[Movie]>?, error) in
-            guard let results else { return }
-            
-            self.movies = results.data
-            self.page += 1
-            
-            self.collectionView.reloadData()
-        }
-    }
-    
-    func toggleFavMovie(at index: Int) {
-        let movieAtIndex = movies[index]
-        if DBManager.shared.isFavMovie(movie: movieAtIndex) {
-            print(movieAtIndex.id)
-            DBManager.shared.deleteFavMovie(movie: movieAtIndex)
-        } else {
-            DBManager.shared.saveFavMovie(movie: movieAtIndex)
-        }
-        
-        collectionView.reloadData()
+//        NetworkRequest.shared.post(page: page) { (results: MainApi<[Movie]>?, error) in
+//            guard let results else { return }
+//            
+//            self.movies = results.data
+//            self.page += 1
+//            
+//            self.collectionView.reloadData()
+//        }
     }
     
     
@@ -80,22 +62,15 @@ class MovieListViewController: UIViewController {
 
 //MARK: - Collection view delegates
 
-extension MovieListViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension SearchViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        movies.count
+        0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? MovieCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.config(movie: movies[indexPath.row])
-        cell.favBtn.tag = indexPath.row
-        cell.favTapped = { [weak self] index in
-            guard let self = self else { return }
-            self.toggleFavMovie(at: index)
-            
-        }
-        
+//        cell.config(movie: movies[indexPath.row])
         return cell
     }
     
@@ -119,14 +94,5 @@ extension MovieListViewController: UICollectionViewDataSource, UICollectionViewD
             layout.itemSize = CGSize(width: (collectionView.frame.width / 2) - 15, height: 180)
             layout.invalidateLayout()
         }
-    }
-}
-
-
-extension MovieListViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let vc = DetailViewController()
-        vc.movie = movies[indexPath.row]
-        self.navigationController?.pushViewController(vc, animated: true)
     }
 }
