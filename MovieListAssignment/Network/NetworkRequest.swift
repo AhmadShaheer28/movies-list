@@ -28,7 +28,7 @@ class NetworkRequest {
     
     func post<T: Decodable>(with url: String, page: Int, query: String = "", completion: @escaping (T?, String?) -> Void) {
         
-        var componenet = URLComponents(string: url)!
+        guard var componenet = URLComponents(string: url) else { return }
         
         componenet.queryItems = [
             URLQueryItem(name: "api_key", value: ApiRequest.apiKey),
@@ -38,9 +38,10 @@ class NetworkRequest {
         if !query.isEmpty {
             componenet.queryItems?.append(URLQueryItem(name: "query", value: query))
         }
+        
+        guard let _url = componenet.url else { return }
                                        
-        var request = URLRequest(url: componenet.url!)
-        request.httpMethod = "POST"
+        var request = URLRequest(url: _url)
         
         URLSession.shared.dataTask(with: request) { (data, response, error) in
             DispatchQueue.main.async {

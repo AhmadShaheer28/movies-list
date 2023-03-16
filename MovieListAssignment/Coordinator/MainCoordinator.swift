@@ -23,9 +23,9 @@ class MainCoordinator: NSObject, Coordinator, UINavigationControllerDelegate {
     
     
     func startSearchController() {
-        let vc = SearchViewController()
-        vc.coordinator = self
-        navigationController.pushViewController(vc, animated: true)
+        let coordinator = SearchCoordinator(navigationController: navigationController)
+        childCoordinators.append(coordinator)
+        coordinator.startSearchController()
     }
     
     func startFavController() {

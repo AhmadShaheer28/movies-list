@@ -17,10 +17,20 @@ class MovieListViewController: BaseViewController {
     
     //MARK: - Variables
     
-    private var movies = [Movie]()
-    private var page = 1
-    private var totalPages = 0
-    var coordinator: MainCoordinator?
+    private var coordinator: MainCoordinator?
+    private var movieVM: MovieListVM?
+    
+    private var setLoaderVisibility: Bool = false {
+        didSet {
+            if setLoaderVisibility {
+                loader.isHidden = false
+                loader.startAnimating()
+            } else {
+                loader.isHidden = true
+                loader.stopAnimating()
+            }
+        }
+    }
     
     
     //MARK: - Lifecycle
@@ -53,14 +63,16 @@ class MovieListViewController: BaseViewController {
         
         navigationItem.rightBarButtonItems = [searchBtn, favBtn]
         
-        getMovies(for: page)
+        setLoaderVisibility = true
+        movieVM = MovieListVM(self)
     }
     
     
     //MARK: - Actions
     
     @objc func searchBtnAction() {
-        self.performSegue(withIdentifier: "SearchVC", sender: nil)
+//        self.performSegue(withIdentifier: "SearchVC", sender: nil)
+        coordinator?.startSearchController()
     }
     
     @objc func favBtnAction() {
@@ -69,61 +81,48 @@ class MovieListViewController: BaseViewController {
     
     //MARK: - Methods
     
-    func getMovies(for page: Int) {
-        loader.isHidden = false
-        loader.startAnimating()
-        
-        NetworkRequest.shared.post(with: Endpoint.movieList, page: page) { (results: MainApi<[Movie]>?, error) in
-            self.loader.isHidden = true
-            self.loader.stopAnimating()
-            
-            guard let results else {
-                self.showError(message: error ?? "")
-                return
-            }
-            
-            self.movies.append(contentsOf: results.data)
-            self.page += 1
-            self.totalPages = results.totalPages
-            self.collectionView.reloadData()
-            
-        }
-    }
     
-    func toggleFavMovie(at index: Int) {
-        let movieAtIndex = movies[index]
-        if DBManager.shared.isFavMovie(movie: movieAtIndex) {
-            print(movieAtIndex.id)
-            DBManager.shared.deleteFavMovie(movie: movieAtIndex)
-        } else {
-            DBManager.shared.saveFavMovie(movie: movieAtIndex)
-        }
-        
+}
+
+//MARK: - View Model Delagates
+
+extension MovieListViewController: MovieListView {
+    
+    func onSuccessResponse() {
+        setLoaderVisibility = false
         collectionView.reloadData()
     }
     
-    
+    func didFailed(with error: String) {
+        setLoaderVisibility = false
+        self.showError(message: error)
+    }
 }
+
 
 //MARK: - Collection view delegates
 
 extension MovieListViewController: UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        movies.count
+        return movieVM?.movies.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? MovieCollectionViewCell else { return UICollectionViewCell() }
         
-        cell.config(movie: movies[indexPath.row])
-        cell.favBtn.tag = indexPath.row
-        cell.favTapped = { [weak self] index in
-            guard let self = self else { return }
-            self.toggleFavMovie(at: index)
+        if let movieVM {
+            cell.config(movie: movieVM.movies[indexPath.row])
+            cell.favBtn.tag = indexPath.row
+            cell.favTapped = { [weak self] index in
+                guard let self = self else { return }
+                self.movieVM?.toggleFavMovie(at: index)
+                
+            }
             
+            return cell
         }
         
-        return cell
+        return UICollectionViewCell()
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
@@ -135,8 +134,11 @@ extension MovieListViewController: UICollectionViewDataSource, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row == movies.count - 8 && page <= totalPages {
-            getMovies(for: page)
+        if let movieVM {
+            if indexPath.row == movieVM.movies.count - 8 && movieVM.page <= movieVM.totalPages {
+                setLoaderVisibility = true
+                movieVM.getMovies()
+            }
         }
     }
     
@@ -158,6 +160,9 @@ extension MovieListViewController: UICollectionViewDataSource, UICollectionViewD
 
 extension MovieListViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        coordinator?.startDetailController(for: movies[indexPath.row])
+        if let movieVM {
+            coordinator?.startDetailController(for: movieVM.movies[indexPath.row])
+        }
     }
 }
+

@@ -10,7 +10,7 @@ import Foundation
 
 struct MainApi<T: Codable>: Codable {
     let page: Int
-    let data: T!
+    let data: T
     let totalPages: Int
     let totalResults: Int
     
@@ -40,20 +40,20 @@ struct MainApi<T: Codable>: Codable {
 
 
 struct Movie: Codable {
-    let adult: Bool
-    let backdropPath : String
+    let adult: Bool?
+    let backdropPath : String?
     let genreIds : [Int]
-    let id : Int
+    let id : UInt
     let originalLanguage : String
     let originalTitle : String
     let overview : String
-    let popularity : Double
-    let posterPath : String
+    let popularity : Double?
+    let posterPath : String?
     let releaseDate : String
     let title : String
-    let video : Bool
-    let voteAverage : Double
-    let voteCount : Int
+    let video : Bool?
+    let voteAverage : Double?
+    let voteCount : Int?
 
     
     enum CodingKeys: String, CodingKey {

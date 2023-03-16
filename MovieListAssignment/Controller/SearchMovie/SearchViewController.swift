@@ -20,8 +20,10 @@ class SearchViewController: BaseViewController {
     var movies = [Movie]()
     private var page = 1
     private var searching = true
+    private var totalPages = 0
+    private var currentQuery = ""
     private var searchedQueries = [String]()
-    var coordinator: MainCoordinator?
+    var coordinator: SearchCoordinator?
     
     
     //MARK: - Lifecycle
@@ -57,6 +59,7 @@ class SearchViewController: BaseViewController {
         
         if !text.isEmpty {
             DBManager.shared.addSearchedQuery(searchedQuery: text)
+            currentQuery = searchTF.text ?? ""
             filterMovies()
         }
     }
@@ -65,14 +68,15 @@ class SearchViewController: BaseViewController {
     //MARK: - Methods
     
     func filterMovies() {
-        NetworkRequest.shared.post(with: Endpoint.searchMovie, page: page, query: searchTF.text ?? "") { (results: MainApi<[Movie]>?, error) in
+        NetworkRequest.shared.post(with: Endpoint.searchMovie, page: page, query: currentQuery) { (results: MainApi<[Movie]>?, error) in
             guard let results else {
                 self.showError(message: error ?? "")
                 return
             }
             
-            self.movies = results.data
+            self.movies.append(contentsOf: results.data) 
             self.page += 1
+            self.totalPages = results.totalPages
             
             self.searching = false
             self.collectionView.reloadData()
@@ -149,6 +153,12 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
         return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     }
     
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == movies.count - 8 && page <= totalPages {
+            filterMovies()
+        }
+    }
+    
     
     // inavalidates layout when device's orientation is changed
     override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
@@ -167,6 +177,7 @@ extension SearchViewController: UICollectionViewDataSource, UICollectionViewDele
 extension SearchViewController: UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         if searching {
+            currentQuery = searchedQueries[indexPath.row]
             filterMovies()
         } else {
             coordinator?.startDetailController(for: movies[indexPath.row])

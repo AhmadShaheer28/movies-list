@@ -41,8 +41,10 @@ class DetailViewController: BaseViewController {
             
             favBtn.setImage(isFav ? UIImage(named: "is.fav") : UIImage(named: "not.fav"), for: .normal)
             
-            if let imgUrl = URL(string: ApiRequest.posterUrl + mov.posterPath) {
+            if let imgUrl = URL(string: ApiRequest.posterUrl + (mov.posterPath ?? "")) {
                 posterIV.getImage(from: imgUrl)
+            } else {
+                posterIV.image = UIImage(named: "placeholder")
             }
             
             titleLbl.text = mov.originalTitle

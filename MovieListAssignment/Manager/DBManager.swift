@@ -11,17 +11,18 @@ import UIKit
 
 class DBManager: NSObject {
     
-    private let delegate = UIApplication.shared.delegate as! AppDelegate
-    private let context: NSManagedObjectContext
+    private let delegate = UIApplication.shared.delegate as? AppDelegate
+    private let context: NSManagedObjectContext?
     
     static let shared = DBManager()
     
     
     private override init() {
-        context = delegate.persistentContainer.viewContext
+        context = delegate?.persistentContainer.viewContext
     }
     
     func saveFavMovie(movie: Movie) {
+        guard let context else { return }
         guard let favMovie = NSEntityDescription.entity(forEntityName: "FavMovies", in: context) else { return }
         
         let fav = NSManagedObject(entity: favMovie, insertInto: context)
@@ -38,6 +39,7 @@ class DBManager: NSObject {
     }
     
     func deleteFavMovie(movie: Movie) {
+        guard let context else { return }
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FavMovies")
         fetchRequest.predicate = NSPredicate(format: "uid == %@", "\(movie.id)")
         
@@ -55,10 +57,11 @@ class DBManager: NSObject {
             print("Fav error", error.localizedDescription)
         }
         
-        delegate.saveContext()
+        delegate?.saveContext()
     }
     
     func isFavMovie(movie: Movie) -> Bool {
+        guard let context else { return false }
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FavMovies")
         fetchRequest.predicate = NSPredicate(format: "uid == %@", "\(movie.id)")
         
@@ -77,7 +80,7 @@ class DBManager: NSObject {
     }
     
     func getAllFavMovies() -> [Movie] {
-        
+        guard let context else { return [] }
         var favMovies = [Movie]()
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "FavMovies")
@@ -87,7 +90,7 @@ class DBManager: NSObject {
             
             for mov in data {
                 if let id = mov.uid, let title = mov.title, let originalTitle = mov.originalTitle, let posterUrl = mov.posterPath, let releaseDate = mov.releaseDate, let overview = mov.overView {
-                    favMovies.append(Movie(adult: false, backdropPath: "", genreIds: [], id: Int(id) ?? 0, originalLanguage: "", originalTitle: originalTitle, overview: overview, popularity: 0, posterPath: posterUrl, releaseDate: releaseDate, title: title, video: false, voteAverage: 0, voteCount: 0))
+                    favMovies.append(Movie(adult: false, backdropPath: "", genreIds: [], id: UInt(id) ?? 0, originalLanguage: "", originalTitle: originalTitle, overview: overview, popularity: 0, posterPath: posterUrl, releaseDate: releaseDate, title: title, video: false, voteAverage: 0, voteCount: 0))
                 }
             }
             
@@ -101,17 +104,25 @@ class DBManager: NSObject {
     }
     
     func addSearchedQuery(searchedQuery: String) {
+        guard let context else { return }
         guard let queries = NSEntityDescription.entity(forEntityName: "SearchQuery", in: context) else { return }
         
         let query = NSManagedObject(entity: queries, insertInto: context)
         
-        query.setValue(searchedQuery, forKey: "query")
+        let allQueries = getAllQueries()
         
-        do { try context.save() }
-        catch let error { print("error while saving Data", error.localizedDescription) }
+        if !allQueries.contains(where: { $0 == searchedQuery }) {
+            query.setValue(searchedQuery, forKey: "query")
+            
+            do { try context.save() }
+            catch let error { print("error while saving Data", error.localizedDescription) }
+        }
     }
     
     func getAllQueries() -> [String] {
+        
+        guard let context else { return [] }
+        
         var queries = [String]()
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: "SearchQuery")

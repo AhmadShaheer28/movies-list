@@ -25,6 +25,12 @@ class FavMovieViewController: BaseViewController {
         setupView()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        collectionView.reloadData()
+    }
+    
     
     //MARK: - View Setup
     func setupView() {
@@ -52,6 +58,8 @@ class FavMovieViewController: BaseViewController {
         } else {
             DBManager.shared.saveFavMovie(movie: movieAtIndex)
         }
+        
+        movies = DBManager.shared.getAllFavMovies()
         
         collectionView.reloadData()
     }

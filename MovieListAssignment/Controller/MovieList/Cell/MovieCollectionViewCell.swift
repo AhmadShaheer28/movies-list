@@ -40,7 +40,7 @@ class MovieCollectionViewCell: UICollectionViewCell {
     
     func config(movie: Movie) {
         
-        if let imgUrl = URL(string: ApiRequest.posterUrl + movie.posterPath) {
+        if let imgUrl = URL(string: ApiRequest.posterUrl + (movie.posterPath ?? "")) {
             posterIV.getImage(from: imgUrl)
         } else {
             posterIV.image = UIImage(named: "placeholder")
